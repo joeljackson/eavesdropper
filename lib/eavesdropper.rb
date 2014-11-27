@@ -1,0 +1,3 @@
+class Eavesdropper
+  
+end
