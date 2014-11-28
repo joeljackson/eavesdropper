@@ -4,8 +4,8 @@ class Eavesdropper::Eavesdropper
     @object = object
   end
 
-  def call( method_name, *arguments)
-    response = @object.send method_name, *arguments
+  def call( method_name, *arguments, &block)
+    response = @object.send method_name, *arguments, &block
     Eavesdropper.logger.add( Eavesdropper.log_level ) {
       "#{@object.class.to_s} called #{method_name} and returned #{response}"
     }

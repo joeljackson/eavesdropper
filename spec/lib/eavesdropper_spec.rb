@@ -11,12 +11,18 @@ describe Eavesdropper::Eavesdropper do
 
   describe "#call" do
     before(:each) do
-      @result = Eavesdropper::Eavesdropper.new(object).call(method_name, *arguments, &block)
+      setup
+      begin
+        @result = Eavesdropper::Eavesdropper.new(object).call(method_name, *arguments, &block)
+      rescue StandardError => e
+        @exception = e
+      end
     end
 
+    let(:setup){}
     let(:object){ double("Object") }
     let(:block){ Proc.new {} }
-    let(:arguments) { }
+    let(:arguments){}
     
     context "Method that returns something" do
       let(:method_name){
@@ -39,6 +45,47 @@ describe Eavesdropper::Eavesdropper do
         specify { expect(@result).to eq "Hello world" }
         specify { expect(@log_double).to have_received(:add) }
       end
+    end
+
+    context "Method that modifies the object internally", pending: true do
+      let(:method_name) {
+        allow(object).to receive(:some_method) do |argument|
+          @test = argument
+        end
+        :some_method
+      }
+
+      let(:arguments) { ['a'] }
+
+      specify { expect(object.instance_variable_get(:"@test")).to eq arguments[0] }
+    end
+
+    context "Method that yields to a block" do
+      let(:method_name) {
+        allow(object).to receive(:some_method) do |&block|
+          block.call
+        end
+        :some_method
+      }
+
+      let(:block) { 
+        Proc.new do
+          @test = "testing"
+        end
+      }
+
+      specify { expect(@test).to eq "testing" }
+    end
+
+    context "Method that raises an exception" do
+      let(:method_name) {
+        allow(object).to receive(:some_method) do |&block|
+          raise StandardError.new("Hello")
+        end
+        :some_method
+      }
+
+      specify { expect(@exception).not_to be_nil }
     end
   end
 end
