@@ -1,6 +1,7 @@
 require 'logger'
 require 'eavesdropper/listener'
 require 'eavesdropper/eavesdroppable'
+require 'eavesdropper/method'
 
 module Eavesdropper
   def self.logger=(logger)
