@@ -1,4 +1,5 @@
 require 'logger'
+require 'eavesdropper/listener'
 
 module Eavesdropper
   def self.logger=(logger)
@@ -15,6 +16,6 @@ module Eavesdropper
   end
 
   def self.log_level
-    @log_level ||= :info
+    @log_level ||= 0
   end
 end

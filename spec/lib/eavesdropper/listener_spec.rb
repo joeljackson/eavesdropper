@@ -85,6 +85,7 @@ describe Eavesdropper::Listener do
       }
 
       specify { expect(@exception).not_to be_nil }
+      specify { expect(@log_double).to have_received(:add) }
     end
   end
 end
