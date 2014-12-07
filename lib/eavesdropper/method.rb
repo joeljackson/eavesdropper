@@ -3,7 +3,7 @@ module Eavesdropper
     def initialize(method)
       @method = method
     end
-  
+
     def alias_without_logging
       "#{method_without_terminator}_without_logging#{method_terminator}".to_sym
     end

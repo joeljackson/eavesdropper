@@ -21,11 +21,15 @@ module Eavesdropper
       end
 
       def create_logged_method(klass, method_name)
-        klass.send :alias_method, Eavesdropper::Method.new(method_name).alias_without_logging, method_name
+        method = Eavesdropper::Method.new(method_name)
+
+        klass.send :alias_method, method.alias_without_logging, method_name
         
-        klass.send :define_method, Eavesdropper::Method.new(method_name).alias_with_logging do |*args|
-          Eavesdropper::Listener.new(self).call(Eavesdropper::Method.new(method_name).alias_without_logging, *args)
+        klass.send :define_method, method.alias_with_logging do |*args|
+          Eavesdropper::Listener.new(self).call(method.alias_without_logging, *args)
         end
+
+        klass.send :private, method.alias_with_logging unless klass.instance_methods.include?(method_name)
       end
     end
   end
